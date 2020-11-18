@@ -7,14 +7,15 @@
 This on Raspbian Lite OS on a Raspberry Pi 4 and Python 3.7.
 
 ```bash
-sudo apt install python3-venv python3-pip librtlsdr-dev rtl-sdr libatlas-base-dev libopenjp2-7 libtiff5
+# Install prereqs
+sudo apt install python3-venv python3-pip librtlsdr-dev \
+  rtl-sdr libatlas-base-dev libopenjp2-7 libtiff5
 
+# Set up venv
 cd ~/airbud
 python3 -m venv venv
 source venv/bin/activate
-pip3 install
 
-# For reference
-# pip3 install pyrtlsdr matplotlib
-# pip3 freeze > requirements.txt
+# Install reqs
+pip3 install -r requirements.txt
 ```
