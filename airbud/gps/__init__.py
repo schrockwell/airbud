@@ -49,6 +49,7 @@ def with_gps(fun):
 def start():
     """Opens serial port and starts parsing data in a background thread."""
     global started
+    global gps_thread
     if started:
         return
 
@@ -58,6 +59,7 @@ def start():
 
 def stop():
     """Closes serial port and shuts down GPS parsing thread."""
+    global started
     if not started:
         return
 

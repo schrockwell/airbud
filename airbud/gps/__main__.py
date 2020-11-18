@@ -7,6 +7,10 @@ gps.start()
 
 # For testing
 while True:
-    position = gps.with_gps(lambda gps: Position(gps))
-    print(position.latitude, position.longitude)
-    time.sleep(1.0)
+    try:
+        position = gps.with_gps(lambda gps: Position(gps))
+        print((position.latitude, position.longitude))
+        time.sleep(1.0)
+    except KeyboardInterrupt:
+        gps.stop()
+        break
