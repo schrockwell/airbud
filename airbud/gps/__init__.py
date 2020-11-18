@@ -26,28 +26,30 @@ def gps_worker():
     """Thread to read and update GPS data."""
     path = find_gps_port()
     file = open(path, 'r')
-    print(f"Opened {path}")
+    print(f'Opened {path}')
 
     while started:
         sentence = file.readline()
-        gps_lock.acquire()
-        for char in sentence:
-            micropy_gps.update(char)
-        gps_lock.release()
+        with gps_lock:
+            for char in sentence:
+                micropy_gps.update(char)
 
     file.close()
-    print(f"Closed {path}")
+    print(f'Closed {path}')
 
 
-def with_gps(fun):
-    """Controls asynchronous access to GPS data."""
-    if not started:
-        raise Exception("GPS not started")
+def with_gps(func):
+    """Decorator that controls asynchronous access to GPS data."""
+    def with_gps_wrapper():
+        if not started:
+            raise Exception("GPS not started")
 
-    gps_lock.acquire()
-    result = fun(micropy_gps)
-    gps_lock.release()
-    return result
+        with gps_lock:
+            result = func(micropy_gps)
+
+        return result
+
+    return with_gps_wrapper
 
 
 def start():
