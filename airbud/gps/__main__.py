@@ -1,7 +1,7 @@
 import time
 
 import airbud.gps as gps
-from airbud.gps.position import Position 
+from airbud.gps.position import Position
 
 gps.start()
 

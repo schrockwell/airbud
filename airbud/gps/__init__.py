@@ -7,18 +7,20 @@ gps_thread = None
 gps_lock = threading.Lock()
 started = False
 
+
 def find_gps_port():
     """Returns the path to the NMEA serial port.
 
     Raises if it cannot be found.
-    
+
     Example: "/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_7_-_GPS_GNSS_Receiver-if00"
     """
 
     paths = os.listdir('/dev/serial/by-id')
     port = next(p for p in paths if 'GPS_GNSS' in p)
-    
+
     return '/dev/serial/by-id/' + port
+
 
 def gps_worker():
     """Thread to read and update GPS data."""
@@ -36,6 +38,7 @@ def gps_worker():
     file.close()
     print(f"Closed {path}")
 
+
 def with_gps(fun):
     """Controls asynchronous access to GPS data."""
     if not started:
@@ -45,6 +48,7 @@ def with_gps(fun):
     result = fun(micropy_gps)
     gps_lock.release()
     return result
+
 
 def start():
     """Opens serial port and starts parsing data in a background thread."""
@@ -57,6 +61,7 @@ def start():
     gps_thread = threading.Thread(target=gps_worker)
     gps_thread.start()
 
+
 def stop():
     """Closes serial port and shuts down GPS parsing thread."""
     global started
@@ -65,4 +70,3 @@ def stop():
 
     started = False
     gps_thread.join()
-
