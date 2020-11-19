@@ -33,7 +33,8 @@ class Acquisition:
         self.scan = 'azimuth'
         self.khz = 14313
         self.started_at = None
-        self.antenna_coordinate = [0.0, 0.0]
+        self.antenna_latitude = 0.0
+        self.antenna_longitude = 0.0
         self.antenna_height_msl = 30
         self.antenna_azimuth_deg = 0
         self.title = 'Airbud'
@@ -97,8 +98,8 @@ class Acquisition:
             position.latitude,
             position.longitude,
             position.altitude,
-            self.antenna_coordinate[0],
-            self.antenna_coordinate[1],
+            self.antenna_latitude,
+            self.antenna_longitude,
             self.antenna_height_msl,
             ellipsoid,
             True  # degrees (instead of radians)
@@ -145,7 +146,8 @@ class Acquisition:
             'scan',
             'khz',
             'started_at',
-            'antenna_coordinate',
+            'antenna_latitude',
+            'antenna_longitude',
             'antenna_height_msl',
             'antenna_azimuth_deg',
             'rx_antenna',
