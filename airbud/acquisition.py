@@ -21,6 +21,19 @@ rx_antenna_types = {
     'isotropic': 'Isotropic'
 }
 
+public_keys = [
+    'scan',
+    'khz',
+    'started_at',
+    'antenna_latitude',
+    'antenna_longitude',
+    'antenna_altitude_m',
+    'antenna_azimuth_deg',
+    'rx_antenna',
+    'title',
+    'notes'
+]
+
 
 def default_json_format(object):
     """Formats datetime objects into ISO 8601 for JSON export."""
@@ -29,22 +42,26 @@ def default_json_format(object):
 
 
 class Acquisition:
-    def __init__(self):
+    def __init__(self, conditions=None):
         self.scan = 'azimuth'
         self.khz = 14313
         self.started_at = None
         self.antenna_latitude = 0.0
         self.antenna_longitude = 0.0
-        self.antenna_height_msl = 30
+        self.antenna_altitude_m = 0.0
         self.antenna_azimuth_deg = 0
         self.title = 'Airbud'
         self.notes = ''
         self.rx_antenna = 'isotropic'
         self.completed = False
 
+        if conditions:
+            self.conditions = conditions
+            self.started_at = None
+
     def start(self):
         """Start the acquisition by initializing the data directory."""
-        if self.completed:
+        if self.started_at or self.completed:
             raise Exception(
                 'This acquisition has been completed and cannot be restarted.'
             )
@@ -97,10 +114,10 @@ class Acquisition:
         return pymap3d.geodetic2aer(
             position.latitude,
             position.longitude,
-            position.altitude,
+            position.altitude_m,
             self.antenna_latitude,
             self.antenna_longitude,
-            self.antenna_height_msl,
+            self.antenna_altitude_m,
             ellipsoid,
             True  # degrees (instead of radians)
         )
@@ -142,18 +159,11 @@ class Acquisition:
 
     @property
     def conditions(self):
-        keys = [
-            'scan',
-            'khz',
-            'started_at',
-            'antenna_latitude',
-            'antenna_longitude',
-            'antenna_height_msl',
-            'antenna_azimuth_deg',
-            'rx_antenna',
-            'title',
-            'notes'
-        ]
-
         # https://stackoverflow.com/a/3420156
-        return {key: vars(self)[key] for key in keys}
+        return {key: vars(self)[key] for key in public_keys}
+
+    @conditions.setter
+    def conditions(self, values_dict):
+        for key in values_dict:
+            if key in public_keys:
+                setattr(self, key, values_dict[key])

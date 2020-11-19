@@ -1,26 +1,44 @@
 from rtlsdr import *
 from pylab import *
 import math
+import os
 
-sdr = RtlSdr()
+# Initialized in start()
+sdr = None
 
-# Required for HF reception – see http://radio-quaderno.blogspot.com/2019/10/fixing-problem-with-hf-reception-on.html
-sdr.set_direct_sampling('q')
-
-# Configure the device
-sdr.sample_rate = 0.240e6
-sdr.center_freq = 14.020e6
-sdr.gain = 49.6
+# Constant sample rate
+sample_rate = 0.240e6
 
 # Make sure Fc is away from the desired frequency to measure,
 # to avoid the DC spike
-fc_offset = -(sdr.sample_rate / 4)
+fc_offset = -(sample_rate / 4)
 
 # Number of sample periods per acquisition
 averaging = 64
 
 # The range of bins to search for peak power
 peak_bins = 8
+
+
+def start():
+    global sdr
+    print('Initializing RTL-SDR...')
+    sdr = RtlSdr()
+
+    # Required for HF reception – see http://radio-quaderno.blogspot.com/2019/10/fixing-problem-with-hf-reception-on.html
+    sdr.set_direct_sampling('q')
+
+    # Configure the device
+    sdr.sample_rate = sample_rate
+    sdr.center_freq = 14.020e6
+    sdr.gain = 49.6
+
+
+def stop():
+    global sdr
+    print('Closing RTL-SDR...')
+    sdr.close()
+    sdr = None
 
 
 def get_peak_power_dbfs(freq, nfft=1024):
@@ -56,6 +74,7 @@ def get_peak_power_dbfs(freq, nfft=1024):
     ylabel('Relative power (dB)')
 
     plot(freq / 1e6, peak_power_db, 'r+', markersize=12)
-    savefig('psd.png')
+    savefig('static/psd_temp.png')
+    os.rename('static/psd_temp.png', 'static/psd.png')
 
     return peak_power_db

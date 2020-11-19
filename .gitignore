@@ -1,6 +1,8 @@
 # Airbud
 psd.png
 data/
+static/*
+!static/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
