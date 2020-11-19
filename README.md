@@ -19,3 +19,13 @@ source venv/bin/activate
 # Install reqs
 pip3 install -r requirements.txt
 ```
+
+## Starting it
+
+Root access is required to access the RTL-SDR.
+
+```bash
+sudo -E venv/bin/python -m airbud
+```
+
+Check the status at `http://localhost:5000/api/status`
