@@ -4,6 +4,7 @@ matplotlib==3.3.3
 numpy==1.19.4
 Pillow==8.0.1
 pkg-resources==0.0.0
+pymap3d==2.4.3
 pyparsing==2.4.7
 pyrtlsdr==0.2.92
 python-dateutil==2.8.1
