@@ -14,7 +14,7 @@
       <div
         class="flex items-center justify-between text-xl border rounded-lg bg-gray-800 border-gray-700 p-4"
       >
-        <div class="flex items-center">
+        <div class="flex items-cente font-medium">
           <div :class="['w-8 h-8 rounded-full mr-4', connectedBgColor]"></div>
           <span :class="connectedTextColor">{{ connectedText }}</span>
         </div>
@@ -23,13 +23,12 @@
 
       <div class="flex space-x-8 my-8">
         <div class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4">
-          <div class="text-xl border-b border-gray-600 pb-2">Acquisition</div>
-
-          <fieldset class="my-8 flex space-x-4">
+          <fieldset class="mb-8 flex space-x-4">
             <div class="flex-no-shrink">
               <label class="font-medium mb-1 block">Frequency (kHz)</label>
               <input
                 v-model="form.khz"
+                @change="postConditions()"
                 class="bg-gray-900 border border-gray-700 p-2 block"
               />
             </div>
@@ -115,10 +114,19 @@
             </button>
           </div>
         </div>
-        <div class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4">
-          <div class="text-xl border-b border-gray-600 mb-4 pb-2">SDR</div>
-          <div class="my-4 text-xl text-center">{{ dbfsText }}</div>
-          <img :src="psdImageUrl" />
+        <div class="flex flex-col space-y-4 flex-1">
+          <div
+            class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4 text-xl font-medium flex items-center justify-between"
+          >
+            <div :class="rangeColor">
+              {{ rangeInWavelengths.toFixed(1) }} λ away
+            </div>
+            <div>{{ status.gps.altitude_m.toFixed() }} m MSL</div>
+          </div>
+          <div class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4">
+            <div class="my-4 text-xl text-center">{{ dbfsText }}</div>
+            <img :src="psdImageUrl" class="block mx-auto -mt-12" />
+          </div>
         </div>
       </div>
     </div>

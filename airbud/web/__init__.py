@@ -81,7 +81,15 @@ def stop_acquisition():
 
 
 def gps_state():
-    return gps_position().to_dict()
+    position = gps_position()
+    look_az, look_el, look_range = acquisition.look_angles(position)
+
+    return {
+        **position.to_dict(),
+        'look_az': look_az,
+        'look_el': look_el,
+        'look_range': look_range,
+    }
 
 
 @airbud.gps.with_gps

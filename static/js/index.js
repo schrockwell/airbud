@@ -42,6 +42,9 @@ new Vue({
         satellites_in_use: 0,
         speed_kmhr: 0.0,
         valid: false,
+        look_az: 0,
+        look_el: 0,
+        look_range: 0,
       },
       rf: {
         dbfs: 0.0,
@@ -56,7 +59,11 @@ new Vue({
         const response = await fetch("/api/status");
         this.status = await response.json();
         this.timestamp = Date.now();
-        this.connected = true;
+
+        if (!this.connected) {
+          this.postConditions();
+          this.connected = true;
+        }
       } catch {
         this.connected = false;
       }
@@ -64,15 +71,18 @@ new Vue({
 
     copyAntennaHeight() {
       this.form.antenna_altitude_m = this.status.gps.altitude_m;
+      this.postConditions();
     },
 
     copyAntennaCoordinate() {
       this.form.antenna_latitude = this.status.gps.latitude;
       this.form.antenna_longitude = this.status.gps.longitude;
+      this.postConditions();
     },
 
     resetForm() {
       this.form = defaultForm();
+      this.postConditions();
     },
 
     async postConditions() {
@@ -156,6 +166,17 @@ new Vue({
         return `${this.status.gps.satellites_in_use} satellites`;
       } else {
         return "No satellites";
+      }
+    },
+    rangeInWavelengths() {
+      const wavelengthMeters = 300000 / this.status.conditions.khz;
+      return this.status.gps.look_range / wavelengthMeters;
+    },
+    rangeColor() {
+      if (this.rangeInWavelengths < 5) {
+        return "text-red-500";
+      } else {
+        return "text-green-500";
       }
     },
   },
