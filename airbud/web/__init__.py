@@ -8,14 +8,19 @@ from airbud.acquisition import Acquisition
 # Flask application
 app = flask.Flask(
     __name__,
-    static_url_path='/static',
+    static_url_path='',
     static_folder='../../static'
 )
-app.config["DEBUG"] = True
+app.config['DEBUG'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Application state
 acquisition = Acquisition()
-hw_state = {}
+
+
+@app.route('/', methods=['GET'])
+def root():
+    return app.send_static_file('index.html')
 
 
 @app.route('/api/status', methods=['GET'])
@@ -40,7 +45,8 @@ def update_conditions():
 @app.route('/api/start', methods=['POST'])
 def start_acquisition():
     acquisition.start()
-    return ''
+    # TODO: Kick off the polling thread to write out to the data CSV
+    return status()
 
 
 @app.route('/api/stop', methods=['POST'])
@@ -49,8 +55,10 @@ def stop_acquisition():
     prev_conditions = acquisition.conditions
     acquisition.stop()
 
+    # TODO: Stop the polling thread
+
     acquisition = Acquisition(conditions=prev_conditions)
-    return ''
+    return status()
 
 
 @airbud.gps.with_gps

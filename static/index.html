@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏀 Airbud</title>
+
+    <link href="/css/tailwind.min.css" rel="stylesheet" />
+    <script src="/js/vue.min.js" type="text/javascript"></script>
+  </head>
+
+  <body class="bg-gray-900 text-gray-300 mx-8 my-6">
+    <div id="app">
+      <div
+        class="flex items-center justify-between text-xl border rounded-lg bg-gray-800 border-gray-700 p-4"
+      >
+        <div class="flex items-center">
+          <div :class="['w-8 h-8 rounded-full mr-4', connectedBgColor]"></div>
+          <span :class="connectedTextColor">{{ connectedText }}</span>
+        </div>
+        <div>{{ satelliteCountText }}</div>
+      </div>
+
+      <div class="flex space-x-8 my-8">
+        <div class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4">
+          <div class="text-xl border-b border-gray-600 pb-2">Acquisition</div>
+
+          <fieldset class="my-8">
+            <label class="font-medium mb-1 block">Frequency (kHz)</label>
+            <input
+              v-model="form.khz"
+              class="bg-gray-900 border border-gray-700 p-2 block"
+            />
+          </fieldset>
+
+          <fieldset class="my-8 flex space-x-4">
+            <select v-model="form.scan" class="flex-1 bg-gray-900 h-8">
+              <option value="azimuth">Azimuth Scan</option>
+              <option value="elevation">Elevation Scan</option>
+            </select>
+            <select v-model="form.rx_antenna" class="flex-1 bg-gray-900 h-8">
+              <option value="isotropic">Isotropic Antenna</option>
+            </select>
+          </fieldset>
+
+          <fieldset class="my-8 flex space-x-4">
+            <div class="flex-1">
+              <label class="font-medium mb-1 block">Antenna Height (m)</label>
+              <input
+                v-model="form.antenna_altitude_m"
+                class="bg-gray-900 border border-gray-700 p-2 block w-full"
+              />
+              <a
+                href="#"
+                @click.prevent="copyAntennaHeight"
+                class="text-blue-500 font-medium mt-1 block"
+                >Set from GPS</a
+              >
+            </div>
+            <div class="flex-1 items-start">
+              <label class="font-medium mb-1 block">Antenna Lat.</label>
+              <input
+                v-model="form.antenna_latitude"
+                class="bg-gray-900 border border-gray-700 p-2 block w-full"
+              />
+              <a
+                href="#"
+                @click.prevent="copyAntennaCoordinate"
+                class="text-blue-500 font-medium mt-1 block"
+                >Set from GPS</a
+              >
+            </div>
+            <div class="flex-1">
+              <label class="font-medium mb-1 block">Antenna Lon.</label>
+              <input
+                v-model="form.antenna_longitude"
+                class="bg-gray-900 border border-gray-700 p-2 block w-full"
+              />
+            </div>
+          </fieldset>
+          <fieldset class="my-8">
+            <textarea
+              v-model="form.notes"
+              rows="5"
+              placeholder="Notes"
+              class="bg-gray-900 w-full border border-gray-700 p-2"
+            ></textarea>
+          </fieldset>
+
+          <div class="mt-8">
+            <button
+              v-if="!started"
+              class="w-full p-4 rounded-xl bg-green-700 hover:bg-green-600 text-xl"
+              @click="startAcquisition"
+              :disabled="starting"
+            >
+              Start Acquisition
+            </button>
+            <button
+              v-if="started"
+              class="w-full p-4 rounded-xl bg-red-700 hover:bg-red-600 text-xl"
+              @click="stopAcquisition"
+              :disabled="stopping"
+            >
+              Stop Acquisition
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4">
+          <div class="text-xl border-b border-gray-600 mb-4 pb-2">SDR</div>
+          <div class="my-4 text-xl text-center">{{ dbfsText }}</div>
+          <img :src="psdImageUrl" />
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/index.js" type="text/javascript"></script>
+  </body>
+</html>

@@ -1,7 +1,15 @@
 from rtlsdr import *
 from pylab import *
+import matplotlib.pyplot as pyplot
 import math
 import os
+
+pyplot.rcParams['figure.facecolor'] = '#00000000'
+pyplot.rcParams['axes.facecolor'] = (17 / 255, 24 / 255, 39 / 255)
+pyplot.rcParams['text.color'] = 'white'
+pyplot.rcParams['axes.labelcolor'] = 'white'
+pyplot.rcParams['xtick.color'] = 'white'
+pyplot.rcParams['ytick.color'] = 'white'
 
 # Initialized in start()
 sdr = None
@@ -74,7 +82,7 @@ def get_peak_power_dbfs(freq, nfft=1024):
     ylabel('Relative power (dB)')
 
     plot(freq / 1e6, peak_power_db, 'r+', markersize=12)
-    savefig('static/psd_temp.png')
-    os.rename('static/psd_temp.png', 'static/psd.png')
+    savefig('static/images/psd_temp.png')
+    os.rename('static/images/psd_temp.png', 'static/images/psd.png')
 
     return peak_power_db
