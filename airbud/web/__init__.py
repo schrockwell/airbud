@@ -2,9 +2,11 @@ import flask
 from flask import jsonify, request, send_from_directory
 import airbud.gps
 import airbud.rf
+import airbud.plots
 from airbud.gps.position import Position
 from airbud.acquisition import Acquisition
-
+import threading
+import time
 # Flask application
 app = flask.Flask(
     __name__,
@@ -16,6 +18,15 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Application state
 acquisition = Acquisition()
+acquisition_thread = None
+
+
+def acquisition_thread_worker():
+    while not acquisition.completed:
+        time.sleep(1.0)
+
+        # This is fast since all the values are already in-memory
+        acquisition.add_sample(gps_position(), airbud.rf.get_latest_power())
 
 
 @app.route('/', methods=['GET'])
@@ -44,27 +55,38 @@ def update_conditions():
 
 @app.route('/api/start', methods=['POST'])
 def start_acquisition():
+    global acquisition_thread
+
     acquisition.start()
-    # TODO: Kick off the polling thread to write out to the data CSV
+
+    acquisition_thread = threading.Thread(target=acquisition_thread_worker)
+    acquisition_thread.start()
+
     return status()
 
 
 @app.route('/api/stop', methods=['POST'])
 def stop_acquisition():
     global acquisition
-    prev_conditions = acquisition.conditions
+    global acquisition_thread
+
     acquisition.stop()
+    acquisition_thread.join()
 
-    # TODO: Stop the polling thread
+    # airbud.plots.generate(acquisition)
 
-    acquisition = Acquisition(conditions=prev_conditions)
+    acquisition_thread = None
+    acquisition = acquisition.clone()
     return status()
 
 
+def gps_state():
+    return gps_position().to_dict()
+
+
 @airbud.gps.with_gps
-def gps_state(micropy_gps):
-    position = Position(micropy_gps)
-    return position.to_dict()
+def gps_position(micropy_gps):
+    return Position(micropy_gps)
 
 
 def rf_state():

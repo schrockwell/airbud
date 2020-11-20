@@ -25,12 +25,21 @@
         <div class="flex-1 border rounded-lg bg-gray-800 border-gray-700 p-4">
           <div class="text-xl border-b border-gray-600 pb-2">Acquisition</div>
 
-          <fieldset class="my-8">
-            <label class="font-medium mb-1 block">Frequency (kHz)</label>
-            <input
-              v-model="form.khz"
-              class="bg-gray-900 border border-gray-700 p-2 block"
-            />
+          <fieldset class="my-8 flex space-x-4">
+            <div class="flex-no-shrink">
+              <label class="font-medium mb-1 block">Frequency (kHz)</label>
+              <input
+                v-model="form.khz"
+                class="bg-gray-900 border border-gray-700 p-2 block"
+              />
+            </div>
+            <div class="flex-grow">
+              <label class="font-medium mb-1 block">Antenna</label>
+              <input
+                v-model="form.title"
+                class="bg-gray-900 border border-gray-700 p-2 block w-full"
+              />
+            </div>
           </fieldset>
 
           <fieldset class="my-8 flex space-x-4">

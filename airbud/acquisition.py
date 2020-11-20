@@ -5,6 +5,7 @@ import json
 import csv
 import pymap3d
 import pymap3d.ellipsoid
+from airbud.power_sample import PowerSample
 
 # GPS models the Earth with WGS84
 ellipsoid = pymap3d.ellipsoid.Ellipsoid("wgs84")
@@ -42,7 +43,20 @@ def default_json_format(object):
 
 
 class Acquisition:
-    def __init__(self, conditions=None):
+    @staticmethod
+    def load(data_dir):
+        json_path = os.path.join(data_dir, 'conditions.json')
+        if not os.path.exists(json_path):
+            return None
+
+        with open(json_path, 'r') as f:
+            conditions = json.load(f)
+
+        acq = Acquisition()
+        acq.conditions = conditions
+        return acq
+
+    def __init__(self):
         self.scan = 'azimuth'
         self.khz = 14313
         self.started_at = None
@@ -55,9 +69,11 @@ class Acquisition:
         self.rx_antenna = 'isotropic'
         self.completed = False
 
-        if conditions:
-            self.conditions = conditions
-            self.started_at = None
+    def clone(self):
+        result = Acquisition()
+        result.conditions = self.conditions
+        result.started_at = None
+        return result
 
     def start(self):
         """Start the acquisition by initializing the data directory."""
@@ -79,35 +95,26 @@ class Acquisition:
         # Create data CSV and write header row
         with open(self.data_csv_path, 'w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow([
-                'Timestamp',
-                'Latitude',
-                'Longitude',
-                'Altitude',
-                'dBFS',
-                'Look Azimuth',
-                'Look Elevation',
-                'Look Range',
-                'RX Ant Gain'
-            ])
+            writer.writerow(PowerSample.header_row())
 
     def add_sample(self, position, dbfs):
         """Append a location/power sample to the log."""
         with open(self.data_csv_path, 'a', newline='') as f:
             look_az, look_el, look_range = self.look_angles(position)
 
+            sample = PowerSample()
+            sample.timestamp = datetime.now(timezone.utc).isoformat()
+            sample.latitude = position.latitude
+            sample.longitude = position.longitude
+            sample.altitude_m = position.altitude_m
+            sample.dbfs = dbfs
+            sample.look_az = look_az
+            sample.look_el = look_el
+            sample.look_range = look_range
+            sample.rx_antenna_gain = self.rx_antenna_gain_db(look_az, look_el)
+
             writer = csv.writer(f)
-            writer.writerow([
-                datetime.now(timezone.utc).isoformat(),
-                position.latitude,
-                position.longitude,
-                position.altitude,
-                dbfs,
-                look_az,
-                look_el,
-                look_range,
-                self.rx_antenna_gain_db(look_az, look_el)
-            ])
+            writer.writerow(sample.to_row())
 
     def look_angles(self, position):
         """Returns (az, el, range) from antenna to UAV in degrees and meters."""
@@ -167,3 +174,16 @@ class Acquisition:
         for key in values_dict:
             if key in public_keys:
                 setattr(self, key, values_dict[key])
+
+        if isinstance(self.started_at, str):
+            self.started_at = datetime.fromisoformat(self.started_at)
+
+    @property
+    def power_samples(self):
+        samples = []
+
+        with open(self.data_csv_path, 'r') as f:
+            reader = csv.DictReader(f)
+            samples = list(map(lambda row: PowerSample.from_dict(row), reader))
+
+        return samples
