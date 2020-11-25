@@ -1,6 +1,7 @@
 from micropyGPS import MicropyGPS
 import os
 import threading
+import airbud.config as config
 
 micropy_gps = MicropyGPS(location_formatting='dd')
 gps_thread = None
@@ -17,7 +18,7 @@ def find_gps_port():
     """
 
     paths = os.listdir('/dev/serial/by-id')
-    port = next(p for p in paths if 'GPS_GNSS' in p)
+    port = next(p for p in paths if config.gps_substring in p)
 
     return '/dev/serial/by-id/' + port
 
@@ -41,7 +42,7 @@ def gps_worker():
 def with_gps(func):
     """Decorator that controls asynchronous access to GPS data."""
     def with_gps_wrapper():
-        if not started:
+        if config.gps_enabled and not started:
             raise Exception("GPS not started")
 
         with gps_lock:
@@ -57,6 +58,10 @@ def start():
     global started
     global gps_thread
     if started:
+        return
+
+    if not config.gps_enabled:
+        print('*** GPS is disabled in the config ***')
         return
 
     started = True

@@ -1,3 +1,4 @@
+import airbud.config as config
 import airbud.rf.sdr as sdr
 import threading
 import time
@@ -19,6 +20,10 @@ def start():
     if started:
         return
 
+    if not config.sdr_enabled:
+        print('*** SDR is disabled in the config ***')
+        return
+
     sdr_thread = threading.Thread(target=sdr_worker)
     sdr_thread.start()
 
@@ -27,8 +32,10 @@ def start():
 
 def stop():
     global started
-    started = False
-    sdr_thread.join()
+    if started:
+        started = False
+        sdr_thread.join()
+        sdr_thread = None
 
 
 def get_latest_power():

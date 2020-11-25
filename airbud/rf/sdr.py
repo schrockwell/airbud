@@ -3,6 +3,7 @@ from pylab import *
 import matplotlib.pyplot as pyplot
 import math
 import os
+import airbud.config as config
 
 pyplot.rcParams['figure.facecolor'] = '#00000000'
 pyplot.rcParams['axes.facecolor'] = (17 / 255, 24 / 255, 39 / 255)
@@ -14,19 +15,6 @@ pyplot.rcParams['ytick.color'] = 'white'
 # Initialized in start()
 sdr = None
 
-# Constant sample rate
-sample_rate = 0.240e6
-
-# Make sure Fc is away from the desired frequency to measure,
-# to avoid the DC spike
-fc_offset = -(sample_rate / 4)
-
-# Number of sample periods per acquisition
-averaging = 64
-
-# The range of bins to search for peak power
-peak_bins = 8
-
 
 def start():
     global sdr
@@ -37,9 +25,9 @@ def start():
     sdr.set_direct_sampling('q')
 
     # Configure the device
-    sdr.sample_rate = sample_rate
+    sdr.sample_rate = config.sdr_sample_rate
     sdr.center_freq = 14.020e6
-    sdr.gain = 49.6
+    sdr.gain = config.sdr_gain
 
 
 def stop():
@@ -49,27 +37,37 @@ def stop():
     sdr = None
 
 
-def get_peak_power_dbfs(freq, nfft=1024):
+def get_peak_power_dbfs(freq):
+    nfft = config.sdr_nfft
+
     # Offset the center freq
-    sdr.center_freq = freq + fc_offset
+    fc_offset = config.sdr_fc_offset * config.sdr_sample_rate
+    rf_fc = freq + fc_offset
+    if_fc = rf_fc + config.sdr_if
+    sdr.center_freq = rf_fc + if_fc
 
     # Perform the acquisition
-    samples = sdr.read_samples(averaging * nfft)
+    samples = sdr.read_samples(config.sdr_averaging * nfft)
 
-    # Remove DC component by subtracting out the mean
+    # Remove DC component (the big spike in the middle of the spectrum)
+    # by subtracting out the mean
     mean = sum(samples) / len(samples)
     samples = samples - mean
 
-    # Plot it!
+    # Plot it! Note that we use `rf_fc` here to represent
+    # the RF sampled BEFORE the upconverter
     clf()
-    psd_result = psd(samples, NFFT=1024, Fs=sdr.sample_rate /
-                     1e6, Fc=sdr.center_freq/1e6)
+    psd_result = psd(samples,
+                     NFFT=nfft,
+                     Fs=sdr.sample_rate / 1e6,
+                     Fc=rf_fc / 1e6)
 
     # Determine the bin where the peak power should occur
     hz_per_bin = sdr.sample_rate / nfft
     target_bin = int((nfft / 2) - fc_offset / hz_per_bin) - 1
 
     # Search for the peak power +/- the expected bin
+    peak_bins = 8
     search_bins = psd_result[0][(
         target_bin - peak_bins):(target_bin + peak_bins)]
     peak_power = max(search_bins)
