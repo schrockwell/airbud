@@ -32,7 +32,8 @@ public_keys = [
     'antenna_azimuth_deg',
     'rx_antenna',
     'title',
-    'notes'
+    'notes',
+    'rf_gain'
 ]
 
 
@@ -67,6 +68,7 @@ class Acquisition:
         self.title = 'Airbud'
         self.notes = ''
         self.rx_antenna = 'isotropic'
+        self.rf_gain = 0.0
         self.completed = False
 
     def clone(self):

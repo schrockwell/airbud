@@ -16,6 +16,10 @@ pyplot.rcParams['ytick.color'] = 'white'
 sdr = None
 
 
+def set_rf_gain(gain):
+    sdr.gain = float(gain)
+
+
 def start():
     global sdr
     print('Initializing RTL-SDR...')
@@ -25,7 +29,7 @@ def start():
     sdr.set_direct_sampling(False)
     sdr.sample_rate = config.sdr_sample_rate
     sdr.center_freq = 14.100e6 + config.sdr_if
-    sdr.gain = config.sdr_gain
+    sdr.gain = 0.0
 
 
 def stop():
@@ -52,7 +56,6 @@ def get_peak_power_dbfs(freq):
     mean = sum(samples) / len(samples)
     samples = samples - mean
 
-    print(max([abs(s) for s in samples]))
     if max([abs(s) for s in samples]) == 1:
         print('Clipping!')
 

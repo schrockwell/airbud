@@ -1,3 +1,35 @@
+RF_GAINS = [
+  "0",
+  "0.9",
+  "1.4",
+  "2.7",
+  "3.7",
+  "7.7",
+  "8.7",
+  "12.5",
+  "14.4",
+  "15.7",
+  "16.6",
+  "19.7",
+  "20.7",
+  "22.9",
+  "25.4",
+  "28.0",
+  "29.7",
+  "32.8",
+  "33.8",
+  "36.4",
+  "37.2",
+  "38.6",
+  "40.2",
+  "42.1",
+  "43.4",
+  "43.9",
+  "44.5",
+  "48.0",
+  "49.6",
+];
+
 function defaultForm() {
   return {
     antenna_altitude_m: "",
@@ -9,10 +41,11 @@ function defaultForm() {
     rx_antenna: "isotropic",
     scan: "azimuth",
     title: "Airbud",
+    rf_gain: "0.0",
   };
 }
 
-new Vue({
+const vue = new Vue({
   el: "#app",
 
   data: {
@@ -33,6 +66,7 @@ new Vue({
         scan: "azimuth",
         started_at: null,
         title: "Airbud",
+        rf_gain: 0.0,
       },
       gps: {
         altitude_m: 0.0,
@@ -96,6 +130,7 @@ new Vue({
         rx_antenna: this.form.rx_antenna,
         scan: this.form.scan,
         title: this.form.title,
+        rf_gain: parseFloat(this.form.rf_gain),
       };
 
       const response = await fetch("/api/conditions", {

@@ -14,6 +14,10 @@ def tune(new_khz):
     khz = new_khz
 
 
+def set_rf_gain(rf_gain):
+    sdr.set_rf_gain(rf_gain)
+
+
 def start():
     global started
     global sdr_thread
@@ -59,7 +63,7 @@ def sdr_worker():
 
         # Update once per second if possible
         duration = time.time() - start_time
-        if duration < 1.0:
-            time.sleep(1.0 - duration)
+        if duration < config.poll_interval:
+            time.sleep(config.poll_interval - duration)
 
     sdr.stop()

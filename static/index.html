@@ -32,6 +32,18 @@
                 class="bg-gray-900 border border-gray-700 p-2 block"
               />
             </div>
+            <div class="flex-no-shrink">
+              <label class="font-medium mb-1 block">RF Gain</label>
+              <select
+                v-model="form.rf_gain"
+                @change="postConditions()"
+                class="bg-gray-900 border border-gray-700 p-2 block h-10"
+              >
+                <option v-for="gain in RF_GAINS" :value="gain">
+                  {{ gain }} dB
+                </option>
+              </select>
+            </div>
             <div class="flex-grow">
               <label class="font-medium mb-1 block">Antenna</label>
               <input

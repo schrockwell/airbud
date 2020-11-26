@@ -3,6 +3,7 @@ from flask import jsonify, request, send_from_directory
 import airbud.gps
 import airbud.rf
 import airbud.plots
+import airbud.config as config
 from airbud.gps.position import Position
 from airbud.acquisition import Acquisition
 import threading
@@ -23,7 +24,7 @@ acquisition_thread = None
 
 def acquisition_thread_worker():
     while not acquisition.completed:
-        time.sleep(1.0)
+        time.sleep(config.poll_interval)
 
         # This is fast since all the values are already in-memory
         acquisition.add_sample(gps_position(), airbud.rf.get_latest_power())
@@ -47,8 +48,11 @@ def status():
 def update_conditions():
     acquisition.conditions = request.json
 
-    if request.json['khz']:
+    if 'khz' in request.json:
         airbud.rf.tune(request.json['khz'])
+
+    if 'rf_gain' in request.json:
+        airbud.rf.set_rf_gain(request.json['rf_gain'])
 
     return status()
 
