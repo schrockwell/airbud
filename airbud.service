@@ -1,0 +1,12 @@
+# Example systemd config file for airbud server
+
+[Unit]
+Description=Airbud
+
+[Service]
+WorkingDirectory=/home/pi/airbud
+ExecStart=/home/pi/airbud/venv/bin/python3 -m airbud
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
