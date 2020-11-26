@@ -23,17 +23,17 @@ def generate(acquisition):
     max_power = max(powers)
     normalized_powers = [power - max_power for power in powers]
 
-    clf()
-    _fig, ax = pyplot.subplots(subplot_kw={'projection': 'polar'})
+    fig, ax = pyplot.subplots(subplot_kw={'projection': 'polar'})
     ax.plot(deg2rad(look_azs), normalized_powers)
     ax.set_title(f'Azimuth – {title}')
     savefig(az_plot_path)
+    close(fig)
 
-    clf()
-    _fig, ax = pyplot.subplots(subplot_kw={'projection': 'polar'})
+    fig, ax = pyplot.subplots(subplot_kw={'projection': 'polar'})
     ax.plot(deg2rad(look_els), normalized_powers)
     ax.set_title(f'Elevation – {title}')
     savefig(el_plot_path)
+    close(el_plot_path)
 
 
 if __name__ == '__main__':

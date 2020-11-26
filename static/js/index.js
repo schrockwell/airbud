@@ -89,8 +89,17 @@ const vue = new Vue({
 
   methods: {
     async fetchStatus() {
+      const abort = new AbortController();
+
       try {
-        const response = await fetch("/api/status");
+        const timeout = setTimeout(() => {
+          abort.abort();
+          this.connected = false;
+        }, 500);
+
+        const response = await fetch("/api/status", { signal: abort.signal });
+        clearTimeout(timeout);
+
         this.status = await response.json();
         this.timestamp = Date.now();
 

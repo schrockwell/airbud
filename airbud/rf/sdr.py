@@ -5,13 +5,6 @@ import math
 import os
 import airbud.config as config
 
-pyplot.rcParams['figure.facecolor'] = '#00000000'
-pyplot.rcParams['axes.facecolor'] = (17 / 255, 24 / 255, 39 / 255)
-pyplot.rcParams['text.color'] = 'white'
-pyplot.rcParams['axes.labelcolor'] = 'white'
-pyplot.rcParams['xtick.color'] = 'white'
-pyplot.rcParams['ytick.color'] = 'white'
-
 # Initialized in start()
 sdr = None
 
@@ -62,11 +55,17 @@ def get_peak_power_dbfs(freq):
     # Plot it! Note that we use `rf_fc` here to represent
     # the RF sampled BEFORE the upconverter
 
-    clf()
-    psd_result = psd(samples,
-                     NFFT=nfft,
-                     Fs=sdr.sample_rate / 1e6,
-                     Fc=rf_fc / 1e6)
+    fig, ax = pyplot.subplots()
+
+    fig.set_facecolor('#00000000')
+    ax.set_facecolor((17 / 255, 24 / 255, 39 / 255))  # Tailwind bg-gray-800
+    for spine in ax.spines.values():
+        spine.set_edgecolor('white')
+
+    psd_result = ax.psd(samples,
+                        NFFT=nfft,
+                        Fs=sdr.sample_rate / 1e6,
+                        Fc=rf_fc / 1e6)
 
     # Determine the bin where the peak power should occur
     hz_per_bin = sdr.sample_rate / nfft
@@ -80,13 +79,15 @@ def get_peak_power_dbfs(freq):
     peak_power_db = 10 * math.log10(peak_power)
 
     # Finish plotting it!
-    ylim(-50, 30)
-    yticks([-50, -40, -30, -20, -10, 0, 10, 20, 30])
-    xlabel('Frequency (MHz)')
-    ylabel('Relative power (dB)')
+    ax.tick_params(colors='white')
+    ax.set_ylim(-50, 30)
+    ax.set_yticks([-50, -40, -30, -20, -10, 0, 10, 20, 30])
+    ax.set_xlabel('Frequency (MHz)', color='white')
+    ax.set_ylabel('Relative power (dB)', color='white')
 
-    plot(freq / 1e6, peak_power_db, 'r+', markersize=12)
-    savefig('static/images/psd_temp.png')
+    ax.plot(freq / 1e6, peak_power_db, 'r+', markersize=12)
+    fig.savefig('static/images/psd_temp.png')
+    close(fig)
     os.rename('static/images/psd_temp.png', 'static/images/psd.png')
 
     return peak_power_db

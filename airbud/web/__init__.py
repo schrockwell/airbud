@@ -8,6 +8,9 @@ from airbud.gps.position import Position
 from airbud.acquisition import Acquisition
 import threading
 import time
+
+# TODO: Refactor all the non-web business logic into another module
+
 # Flask application
 app = flask.Flask(
     __name__,
@@ -77,7 +80,7 @@ def stop_acquisition():
     acquisition.stop()
     acquisition_thread.join()
 
-    # airbud.plots.generate(acquisition)
+    airbud.plots.generate(acquisition)
 
     acquisition_thread = None
     acquisition = acquisition.clone()

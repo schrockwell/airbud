@@ -20,6 +20,12 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
+## Turning Pi into an Access Point
+
+You want to be able to connect to the Pi wirelessly in the field. You should have the Pi plugged into ethernet to configure this (duh).
+
+https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md
+
 ## Starting it
 
 Root access is required to access the RTL-SDR.
