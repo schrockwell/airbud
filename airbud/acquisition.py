@@ -122,9 +122,9 @@ class Acquisition:
             position.latitude,
             position.longitude,
             position.altitude_m,
-            self.antenna_latitude,
-            self.antenna_longitude,
-            self.antenna_altitude_m,
+            self.antenna_latitude or 0,
+            self.antenna_longitude or 0,
+            self.antenna_altitude_m or 0,
             ellipsoid,
             True  # degrees (instead of radians)
         )
