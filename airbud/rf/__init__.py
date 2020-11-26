@@ -17,6 +17,7 @@ def tune(new_khz):
 def start():
     global started
     global sdr_thread
+
     if started:
         return
 
@@ -32,6 +33,8 @@ def start():
 
 def stop():
     global started
+    global sdr_thread
+
     if started:
         started = False
         sdr_thread.join()

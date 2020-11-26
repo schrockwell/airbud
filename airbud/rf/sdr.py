@@ -21,12 +21,10 @@ def start():
     print('Initializing RTL-SDR...')
     sdr = RtlSdr()
 
-    # Required for HF reception – see http://radio-quaderno.blogspot.com/2019/10/fixing-problem-with-hf-reception-on.html
-    sdr.set_direct_sampling('q')
-
     # Configure the device
+    sdr.set_direct_sampling(False)
     sdr.sample_rate = config.sdr_sample_rate
-    sdr.center_freq = 14.020e6
+    sdr.center_freq = 14.100e6 + config.sdr_if
     sdr.gain = config.sdr_gain
 
 
@@ -44,7 +42,7 @@ def get_peak_power_dbfs(freq):
     fc_offset = config.sdr_fc_offset * config.sdr_sample_rate
     rf_fc = freq + fc_offset
     if_fc = rf_fc + config.sdr_if
-    sdr.center_freq = rf_fc + if_fc
+    sdr.center_freq = if_fc
 
     # Perform the acquisition
     samples = sdr.read_samples(config.sdr_averaging * nfft)
@@ -54,8 +52,13 @@ def get_peak_power_dbfs(freq):
     mean = sum(samples) / len(samples)
     samples = samples - mean
 
+    print(max([abs(s) for s in samples]))
+    if max([abs(s) for s in samples]) == 1:
+        print('Clipping!')
+
     # Plot it! Note that we use `rf_fc` here to represent
     # the RF sampled BEFORE the upconverter
+
     clf()
     psd_result = psd(samples,
                      NFFT=nfft,
@@ -74,8 +77,8 @@ def get_peak_power_dbfs(freq):
     peak_power_db = 10 * math.log10(peak_power)
 
     # Finish plotting it!
-    ylim(-60, 0)
-    yticks([-60, -50, -40, -30, -20, -10, 0])
+    ylim(-50, 30)
+    yticks([-50, -40, -30, -20, -10, 0, 10, 20, 30])
     xlabel('Frequency (MHz)')
     ylabel('Relative power (dB)')
 
