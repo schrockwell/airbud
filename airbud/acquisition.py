@@ -6,6 +6,7 @@ import csv
 import pymap3d
 import pymap3d.ellipsoid
 from airbud.power_sample import PowerSample
+import math
 
 # GPS models the Earth with WGS84
 ellipsoid = pymap3d.ellipsoid.Ellipsoid("wgs84")
@@ -114,6 +115,7 @@ class Acquisition:
             sample.look_el = look_el
             sample.look_range = look_range
             sample.rx_antenna_gain = self.rx_antenna_gain_db(look_az, look_el)
+            sample.fspl_db = self.fspl_db(look_range)
 
             writer = csv.writer(f)
             writer.writerow(sample.to_row())
@@ -130,6 +132,14 @@ class Acquisition:
             ellipsoid,
             True  # degrees (instead of radians)
         )
+
+    def fspl_db(self, distance):
+        fspl = (4 * math.pi * distance / self.wavelength) ** 2
+        return 10 * math.log10(fspl)
+
+    @property
+    def wavelength(self):
+        return 3e8 / (self.khz * 1e3)
 
     def rx_antenna_gain_db(self, look_az, look_el):
         """Returns the relative gain of the receive antenna for a signal incoming from a given direction."""

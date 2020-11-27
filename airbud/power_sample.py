@@ -10,6 +10,7 @@ csv_columns = [
     'look_el',
     'look_range',
     'rx_antenna_gain',
+    'fspl_db'
 ]
 
 
@@ -28,6 +29,7 @@ class PowerSample:
         self.look_el = 0
         self.look_range = 0
         self.rx_antenna_gain = 0
+        self.fspl_db = 0
 
     def to_row(self):
         return list(map(lambda col: vars(self)[col], csv_columns))
@@ -44,4 +46,5 @@ class PowerSample:
         sample.look_el = float(row['look_el'])
         sample.look_range = float(row['look_range'])
         sample.rx_antenna_gain = float(row['rx_antenna_gain'])
+        sample.fspl_db = float(row['fspl_db'])
         return sample
