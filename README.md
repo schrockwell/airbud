@@ -41,3 +41,11 @@ sudo cp airbud.service /etc/systemd/system/airbud.service
 sudo systemctl enable airbud
 sudo systemctl start airbud
 ```
+
+## Running tests
+
+Tests are set up using [`Pytest`](https://docs.pytest.org/en/stable/). Inside of the virtual environment, with requirements installed, you can run the tests with
+
+```bash
+pytest
+```
