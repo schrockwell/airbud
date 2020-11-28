@@ -30,7 +30,7 @@ def status():
 
 @app.route('/api/conditions', methods=['POST'])
 def update_conditions():
-    acquire.update_conditinos(request.json)
+    acquire.update_conditions(request.json)
     return status()
 
 

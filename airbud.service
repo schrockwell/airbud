@@ -5,7 +5,8 @@ Description=Airbud
 
 [Service]
 WorkingDirectory=/home/pi/airbud
-ExecStart=/home/pi/airbud/venv/bin/python3 -m airbud
+ExecStart=/home/pi/airbud/bin/airbud
+User=pi
 Restart=always
 
 [Install]
