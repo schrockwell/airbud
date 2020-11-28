@@ -8,6 +8,7 @@ import pymap3d.ellipsoid
 from airbud.power_sample import PowerSample
 import math
 
+
 # GPS models the Earth with WGS84
 ellipsoid = pymap3d.ellipsoid.Ellipsoid("wgs84")
 
