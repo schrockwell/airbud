@@ -1,6 +1,6 @@
 # Airbud
 
-> There's no rule that says that UAVs can't measure antenna patterns!!
+> There's no rule that says that UAVs can't measure antenna patterns!
 
 ## Pi Setup
 
@@ -28,11 +28,16 @@ https://www.raspberrypi.org/documentation/configuration/wireless/access-point-ro
 
 ## Starting it
 
-Root access is required to access the RTL-SDR.
-
 ```bash
-source venv/bin/activate
-python -m airbud
+./bin/airbud
 ```
 
-Check it out at `http://localhost:5000/`
+Check it out at `http://localhost:5000/`.
+
+There's also an example systemd `airbud.service` file provided if you want it to run as a service.
+
+```bash
+sudo cp airbud.service /etc/systemd/system/airbud.service
+sudo systemctl enable airbud
+sudo systemctl start airbud
+```
