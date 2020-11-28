@@ -1,3 +1,5 @@
+"""Flask web application server (duh)."""
+
 from flask import Flask, jsonify, request, send_from_directory
 import airbud.acquire as acquire
 

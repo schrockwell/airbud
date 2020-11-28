@@ -1,4 +1,9 @@
+"""GPS position data."""
+
+
 class Position:
+    """Represents the state of the GPS receiver at a point in time."""
+
     def __init__(self, micropy_gps):
         ordinate, cardinal = micropy_gps.latitude or (0, 0)
         self.latitude = ordinate * (1 if cardinal == 'N' else -1)

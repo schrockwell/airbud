@@ -1,3 +1,5 @@
+"""Wraps up GPS access."""
+
 from micropyGPS import MicropyGPS
 import os
 import threading

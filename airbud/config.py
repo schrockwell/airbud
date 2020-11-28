@@ -1,3 +1,5 @@
+"""Magic constants go here!"""
+
 #
 # RTL-SDR
 #

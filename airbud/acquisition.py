@@ -1,3 +1,5 @@
+"""Represents a single acquisition and the associated state and files."""
+
 from datetime import date, datetime, timezone
 import os
 import os.path

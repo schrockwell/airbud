@@ -1,3 +1,5 @@
+"""Wraps up RTL-SDR access with the features we care about."""
+
 from rtlsdr import *
 from pylab import *
 import matplotlib.pyplot as pyplot

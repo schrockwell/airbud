@@ -1,3 +1,5 @@
+"""Represents one line in the data CSV."""
+
 from datetime import date, datetime, timezone
 
 csv_columns = [

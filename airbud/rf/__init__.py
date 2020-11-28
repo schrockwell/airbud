@@ -1,3 +1,5 @@
+"""Interface into configuring and getting data out of the SDR."""
+
 import airbud.config as config
 import airbud.rf.sdr as sdr
 import threading

@@ -1,3 +1,5 @@
+"""Coordinates the acquisition process between SDR, GPS, and web interface."""
+
 import time
 import threading
 

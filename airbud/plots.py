@@ -1,3 +1,7 @@
+"""Generates plots from acquisition data after the acquisition is complete.
+
+Call this module as `__main__` to regenerate plots for all data directories."""
+
 from pylab import *
 import matplotlib.pyplot as pyplot
 import os
